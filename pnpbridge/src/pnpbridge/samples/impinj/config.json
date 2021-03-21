@@ -1,0 +1,32 @@
+{
+    "$schema": "../../../pnpbridge/src/pnpbridge_config_schema.json",
+    "pnp_bridge_connection_parameters": {
+      "connection_type": "dps",
+      "connection_string": "<IoT Hub Connection String for connection_type = connection_string>",
+      "root_interface_model_id": "dtmi:impinj:FixedReader;1",
+      "auth_parameters": {
+        "auth_type": "symmetric_key",
+        "symmetric_key": "[Symmetrick Key for IoTHub/DPS]"
+      },
+      "dps_parameters": {
+        "global_prov_uri": "global.azure-devices-provisioning.net",
+        "id_scope": "",
+        "device_id": "R700"
+      }
+    },
+    "pnp_bridge_debug_trace": false,
+    "pnp_bridge_config_source": "local",
+    "pnp_bridge_interface_components": [
+      {
+        "_comment": "Impinj Reader Device (R700)",
+        "pnp_bridge_component_name": "R700",
+        "pnp_bridge_adapter_id": "impinj-reader-r700",
+        "pnp_bridge_adapter_config": {
+          "hostname": "",
+          "username": "",
+          "password": ""
+        }
+      }
+    ],
+    "pnp_bridge_adapter_global_configs": {}
+  }

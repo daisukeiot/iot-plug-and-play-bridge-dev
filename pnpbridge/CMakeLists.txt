@@ -79,6 +79,11 @@ IF(WIN32)
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endif()
 
+if(${build_impinj})
+    message("===================================================\r\nBuilding Impinj R700\r\n===================================================")
+    add_definitions(-DIMPINJ_BUILD)
+endif()
+
 add_subdirectory(src)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)

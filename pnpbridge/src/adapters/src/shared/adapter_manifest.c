@@ -4,6 +4,7 @@
 //Pnp Adapter headers
 #include <pnpadapter_api.h>
 
+#ifndef IMPINJ_BUILD
 extern PNP_ADAPTER SerialPnpInterface;
 extern PNP_ADAPTER ModbusPnpInterface;
 extern PNP_ADAPTER MqttPnpInterface;
@@ -35,6 +36,13 @@ PPNP_ADAPTER PNP_ADAPTER_MANIFEST[] = {
 };
 
 #endif
+#else //IMPINJ_BUILD
+extern PNP_ADAPTER ImpinjReaderR700;
+
+PPNP_ADAPTER PNP_ADAPTER_MANIFEST[] = {
+    &ImpinjReaderR700
+};
+#endif //IMPINJ_BUILD
 
 const int PnpAdapterCount = sizeof(PNP_ADAPTER_MANIFEST) / sizeof(PPNP_ADAPTER);
 

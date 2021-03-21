@@ -10,20 +10,20 @@ log_dir=$build_root
 run_e2e_tests=OFF
 run_sfc_tests=OFF
 run_longhaul_tests=OFF
-build_amqp=ON
-build_http=ON
+build_amqp=OFF
+build_http=OFF
 build_mqtt=ON
 no_blob=OFF
 run_unittests=OFF
 build_python=OFF
 run_valgrind=0
-build_folder=$build_root"/cmake/pnpbridge_linux"
+build_folder=$build_root"/cmake/pnpbridge_Impinj"
 make=true
 toolchainfile=" "
 cmake_install_prefix=" "
 no_logging=OFF
 prov_auth=ON #OFF
-prov_use_tpm_simulator=ON #OFF
+prov_use_tpm_simulator=OFF
 use_edge_modules=ON #OFF
 
 usage ()
@@ -123,11 +123,10 @@ process_args ()
 }
 
 process_args $*
-
 rm -r -f $build_folder
 mkdir -p $build_folder
 pushd $build_folder
-cmake $toolchainfile $cmake_install_prefix -Drun_valgrind:BOOL=$run_valgrind -DcompileOption_C:STRING="$extracloptions" -Drun_e2e_tests:BOOL=$run_e2e_tests -Drun_sfc_tests:BOOL=$run-sfc-tests -Drun_longhaul_tests=$run_longhaul_tests -Duse_amqp:BOOL=$build_amqp -Duse_http:BOOL=$build_http -Duse_mqtt:BOOL=$build_mqtt -Ddont_use_uploadtoblob:BOOL=$no_blob -Drun_unittests:BOOL=$run_unittests -Dbuild_python:STRING=$build_python -Dno_logging:BOOL=$no_logging $build_root -Duse_prov_client:BOOL=$prov_auth -Duse_tpm_simulator:BOOL=$prov_use_tpm_simulator -Duse_edge_modules=$use_edge_modules -Dbuild_impinj="OFF"
+cmake $toolchainfile $cmake_install_prefix -Drun_valgrind:BOOL=$run_valgrind -DcompileOption_C:STRING="$extracloptions" -Drun_e2e_tests:BOOL=$run_e2e_tests -Drun_sfc_tests:BOOL=$run-sfc-tests -Drun_longhaul_tests=$run_longhaul_tests -Duse_amqp:BOOL=$build_amqp -Duse_http:BOOL=$build_http -Duse_mqtt:BOOL=$build_mqtt -Ddont_use_uploadtoblob:BOOL=$no_blob -Drun_unittests:BOOL=$run_unittests -Dbuild_python:STRING=$build_python -Dno_logging:BOOL=$no_logging $build_root -Duse_prov_client:BOOL=$prov_auth -Duse_tpm_simulator:BOOL=$prov_use_tpm_simulator -Duse_edge_modules=$use_edge_modules -Dbuild_impinj="ON"
 
 if [ "$make" = true ]
 then

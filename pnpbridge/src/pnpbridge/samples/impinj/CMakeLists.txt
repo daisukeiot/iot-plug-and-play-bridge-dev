@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 2.8.11)
 #this is CMakeLists for pnp_bridge
 
-set(PROJECT_NAME pnpbridge)
+set(PROJECT_NAME impinj_bin)
 
 if(POLICY CMP0042)
     cmake_policy(SET CMP0042 NEW)
@@ -14,37 +14,11 @@ compileAsC99()
 
 # Core PnpBridge C Files
 set(pnp_bridge_c_core_files
-    ./src/configuration_parser.c
-    ./src/iothub_comms.c
-    ./src/pnpadapter_manager.c
-    ./src/pnpbridge.c
-    ./src/utility.c
-    ./src/pnpadapter_api.c
+    ./main.c
 )
 
 # Core PnpBridge headers
 set(pnp_bridge_h_core_files
-    ./inc/configuration_parser.h
-    ./inc/iothub_comms.h
-    ./inc/pnpadapter_api.h
-    ./inc/pnpadapter_manager.h
-    ./inc/pnpbridge.h
-    ./inc/pnpbridge_common.h
-)
-
-# Pnp Common Helper C Files
-set(pnp_helper_c_core_files
-    ./common/pnp_device_client.c
-    ./common/pnp_dps.c
-    ./common/pnp_protocol.c
-)
-
-# Pnp Common Helper headers
-set(pnp_helper_h_core_files
-    ./common/pnp_device_client.h
-    ./common/pnp_dps.h
-    ./common/pnp_protocol.h
-    ./common/pnp_bridge_client.h
 )
 
 # set(install_staticlibs
@@ -59,15 +33,14 @@ ENDIF(WIN32)
 
 add_definitions(-DPNP_LOGGING_ENABLED)
 
-
 # set(pnp_bridge_h_install_files
     # ${pnp_bridge_h_files}
 # )
 
 set(pnp_bridge_INC_FOLDER ${CMAKE_CURRENT_LIST_DIR} CACHE INTERNAL "this is what needs to be included if using pnp_bridge lib" FORCE)
-set(pnp_bridge_common_pnp_inc ${CMAKE_CURRENT_LIST_DIR}/../pnpbridge/common CACHE INTERNAL "this is what needs to be included if using pnp_bridge lib" FORCE)
 
 include_directories(inc)
+include_directories(common)
 include_directories(../../deps/azure-iot-sdk-c-pnp/deps/parson)
 include_directories(../../deps/azure-iot-sdk-c-pnp/c-utility/inc)
 include_directories(../../deps/azure-iot-sdk-c-pnp/c-utility/deps/azure-macro-utils-c/inc)
@@ -75,16 +48,16 @@ include_directories(../../deps/azure-iot-sdk-c-pnp/c-utility/deps/umock-c/inc)
 include_directories(../../deps/azure-iot-sdk-c-pnp/iothub_client/inc)
 include_directories(../../deps/azure-iot-sdk-c-pnp/provisioning_client/inc)
 include_directories(${pnp_bridge_INC_FOLDER})
-include_directories(${pnp_bridge_common_pnp_inc})
 
 if(WIN32)
-include_directories(../../deps/azure-iot-sdk-c-pnp/c-utility/pal/windows)
+include_directories(../../../../deps/azure-iot-sdk-c-pnp/c-utility/pal/windows)
 endif()
 
 set(pnp_bridge_common_libs
     aziotsharedutil
     iothub_client
     iothub_client_mqtt_transport
+#    iothub_client_mqtt_ws_transport
     parson
     umqtt
     msr_riot
@@ -92,17 +65,11 @@ set(pnp_bridge_common_libs
     prov_auth_client
     prov_device_client
     prov_mqtt_transport
-    utpm
+    pnpbridge
+    pnpbridge_adapters
+    pnpbridge_impinj_reader_r700
 )
 
-if(NOT ${build_impinj})
-    set(pnp_bridge_common_libs
-        iothub_client_http_transport
-        iothub_client_amqp_transport
-        iothub_client_amqp_ws_transport
-        iothub_client_mqtt_ws_transport
-    )
-endif()
 
 if(WIN32)
 set(pnp_bridge_common_libs
@@ -110,34 +77,16 @@ set(pnp_bridge_common_libs
 )
 endif()
 
-add_library(${PROJECT_NAME} STATIC 
+add_executable(${PROJECT_NAME}
     ${pnp_bridge_c_core_files}
     ${pnp_bridge_h_core_files}
-    ${pnp_helper_c_core_files}
-    ${pnp_helper_h_core_files}
 )
-
-#add_executable(${PROJECT_NAME}
-#    ${pnp_bridge_c_core_files}
-#    ${pnp_bridge_h_core_files}
-#    ${pnp_helper_c_core_files}
-#    ${pnp_helper_h_core_files}
-#)
-
-add_subdirectory(tests)
-add_subdirectory(samples)
-
-if(WIN32)
-
-else()
-    if(NOT ${build_impinj})
-        add_subdirectory(module)
-    endif()
-endif()
 
 if(WIN32)
 # Ole32 (COM) is used by camera health monitoring adapter
-target_link_libraries(${PROJECT_NAME} ${pnp_bridge_common_libs} cfgmgr32 mfplat mfsensorgroup Ole32 runtimeobject)
+target_link_libraries(${PROJECT_NAME} ${pnp_bridge_common_libs} cfgmgr32 mfplat mfsensorgroup Ole32)
 else()
 target_link_libraries(${PROJECT_NAME} ${pnp_bridge_common_libs})
 endif()
+
+configure_file(./config.json config.json COPYONLY)

@@ -85,11 +85,7 @@ set(pnp_bridge_common_libs
     aziotsharedutil
     pnpbridge
     iothub_client
-    iothub_client_http_transport
-    iothub_client_amqp_transport
-    iothub_client_amqp_ws_transport
     iothub_client_mqtt_transport
-    iothub_client_mqtt_ws_transport
     parson
     umqtt
     msr_riot
@@ -97,20 +93,27 @@ set(pnp_bridge_common_libs
     prov_auth_client
     prov_device_client
     prov_mqtt_transport
-    utpm
-    uhttp
     pthread
     curl
     ssl
     crypto
     m
-    pnpbridge_adapters
-    pnpbridge_modbus
-    pnpbridge_mqtt
-    pnpbridge_serial
-    pnpbridge_environmentalsensor
 )
-
+if(NOT ${build_impinj})
+  set(pnp_bridge_common_libs
+      iothub_client_http_transport
+      iothub_client_amqp_transport
+      iothub_client_amqp_ws_transport
+      iothub_client_mqtt_ws_transport
+      utpm
+      uhttp
+      pnpbridge_adapters
+      pnpbridge_modbus
+      pnpbridge_mqtt
+      pnpbridge_serial
+      pnpbridge_environmentalsensor
+  )
+endif()
 
 add_executable(${PROJECT_NAME}
     ${pnp_bridge_c_core_files}
