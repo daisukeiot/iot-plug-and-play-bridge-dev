@@ -44,13 +44,21 @@ extern "C"
         unsigned char** CommandResponse,
         size_t* CommandResponseSize);
 
-    // Process Property Update Callback
-    typedef void(*PNPBRIDGE_COMPONENT_PROPERTY_CALLBACK)(
+    // Process Property Update for DEVICE_TWIN_UPDATE_COMPLETE Callback
+    typedef bool (*PNPBRIDGE_COMPONENT_PROPERTY_COMPLETE_CALLBACK)(
+        PNPBRIDGE_COMPONENT_HANDLE PnpComponentHandle,
+        JSON_Value *payload,
+        void *userContextCallback);
+
+    // Process Property Update for DEVICE_TWIN_UPDATE_PARTIAL Callback
+    typedef void(*PNPBRIDGE_COMPONENT_PROPERTY_PATCH_CALLBACK)(
         PNPBRIDGE_COMPONENT_HANDLE PnpComponentHandle,
         const char* PropertyName,
         JSON_Value* PropertyValue,
         int version,
         void* userContextCallback);
+
+#define PNPBRIDGE_COMPONENT_PROPERTY_CALLBACK PNPBRIDGE_COMPONENT_PROPERTY_PATCH_CALLBACK
 
     /*
     * @brief    Create is the adapter callback which allocates and initializes the adapter 
@@ -97,7 +105,7 @@ extern "C"
     *           for the associated component. After the internal creation of component resources in the
     *           PNPBRIDGE_COMPONENT_CREATE callback, the pnp adapter should set device context on the component
     *           handle by calling PnpComponentHandleSetContext, bind a callback to handle property updates on
-    *           the component by calling PnpComponentHandleSetPropertyUpdateCallback and bind a callback to
+    *           the component by calling PnpComponentHandleSetPropertyPatchCallback and bind a callback to
     *           The adapter must be ready to receive commands or property updates once it returns 
     *           from this callback. The adapter should wait until PNPBRIDGE_COMPONENT_START callback to
     *           start reporting telemetry. PNPBRIDGE_COMPONENT_CREATE is invoked once for each component
@@ -226,6 +234,25 @@ extern "C"
     );
 
     /**
+    * @brief    PnpComponentHandleSetPropertyCompleteCallback sets property update callback on the
+    *           component handle to manage cloud to device property updates per component.
+    *           PnpComponentHandleSetPropertyCompleteCallback should be called from a 
+    *           PNPBRIDGE_COMPONENT_CREATE callback
+
+    * @param    ComponentHandle        Handle to pnp component
+    *
+    * @param    PropertyUpdateCallback Property update Callback
+    * 
+    * @returns  void   PnpComponentHandleSetPropertyCompleteCallback will always overwrite successfully
+    */
+    MOCKABLE_FUNCTION(,
+        void,
+        PnpComponentHandleSetPropertyCompleteCallback,
+        PNPBRIDGE_COMPONENT_HANDLE, ComponentHandle,
+        PNPBRIDGE_COMPONENT_PROPERTY_COMPLETE_CALLBACK, PropertyUpdateCallback
+    );
+
+    /**
     * @brief    PnpComponentHandleSetPropertyUpdateCallback sets property update callback on the
     *           component handle to manage cloud to device property updates per component.
     *           PnpComponentHandleSetPropertyUpdateCallback should be called from a 
@@ -235,14 +262,16 @@ extern "C"
     *
     * @param    PropertyUpdateCallback Property update Callback
     * 
-    * @returns  void   PnpComponentHandleSetPropertyUpdateCallback will always overwrite successfully
+    * @returns  void   PnpComponentHandleSetPropertyPatchCallback will always overwrite successfully
     */
     MOCKABLE_FUNCTION(,
         void,
-        PnpComponentHandleSetPropertyUpdateCallback,
+        PnpComponentHandleSetPropertyPatchCallback,
         PNPBRIDGE_COMPONENT_HANDLE, ComponentHandle,
-        PNPBRIDGE_COMPONENT_PROPERTY_CALLBACK, PropertyUpdateCallback
+        PNPBRIDGE_COMPONENT_PROPERTY_PATCH_CALLBACK, PropertyUpdateCallback
     );
+
+    #define PnpComponentHandleSetPropertyUpdateCallback PnpComponentHandleSetPropertyPatchCallback
 
     /**
     * @brief    PnpComponentHandleSetCommandCallback sets process command callback on the

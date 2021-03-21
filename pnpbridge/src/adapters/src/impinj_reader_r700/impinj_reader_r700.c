@@ -13,6 +13,22 @@
 PnP Bridge
 ****************************************************************/
 
+/****************************************************************
+A callback for Property Update (DEVICE_TWIN_UPDATE_COMPLETE)
+****************************************************************/
+bool ImpinjReader_OnPropertyCompleteCallback(
+    PNPBRIDGE_COMPONENT_HANDLE PnpComponentHandle,
+    JSON_Value *Payload,
+    void *userContextCallback)
+{
+    LogJsonPretty(Payload, "R700 : %s()", __FUNCTION__);
+
+    return true;
+}
+
+/****************************************************************
+A callback for Property Update (DEVICE_TWIN_UPDATE_PARTIAL)
+****************************************************************/
 void
 ImpinjReader_OnPropertyPatchCallback(
     PNPBRIDGE_COMPONENT_HANDLE PnpComponentHandle,
@@ -21,7 +37,8 @@ ImpinjReader_OnPropertyPatchCallback(
     int version,
     void *ClientHandle)
 {
-    LogJsonPretty(PropertyValue, "R700 : %s() Property %s", __FUNCTION__, PropertyName);
+    LogJsonPretty(PropertyValue, "R700 : %s() Property=%s", __FUNCTION__, PropertyName);
+
     return;
 }
 
@@ -121,7 +138,8 @@ ImpinjReader_CreatePnpComponent(
         device->ComponentName = ComponentName;
         PnpComponentHandleSetContext(BridgeComponentHandle, device);
         PnpComponentHandleSetCommandCallback(BridgeComponentHandle, ImpinjReader_OnCommandCallback);
-        PnpComponentHandleSetPropertyUpdateCallback(BridgeComponentHandle, ImpinjReader_OnPropertyPatchCallback);
+        PnpComponentHandleSetPropertyPatchCallback(BridgeComponentHandle, ImpinjReader_OnPropertyPatchCallback);
+        PnpComponentHandleSetPropertyCompleteCallback(BridgeComponentHandle, ImpinjReader_OnPropertyCompleteCallback);
         result = IOTHUB_CLIENT_OK;
     }
 

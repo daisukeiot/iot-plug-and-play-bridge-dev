@@ -42,7 +42,8 @@ extern "C"
         void* context;
         char* componentName;
         char* adapterIdentity;
-        PNPBRIDGE_COMPONENT_PROPERTY_CALLBACK processPropertyUpdate;
+        PNPBRIDGE_COMPONENT_PROPERTY_PATCH_CALLBACK processPropertyPatch;
+        PNPBRIDGE_COMPONENT_PROPERTY_COMPLETE_CALLBACK processPropertyComplete;
         PNPBRIDGE_COMPONENT_METHOD_CALLBACK processCommand;
         PNP_BRIDGE_CLIENT_HANDLE clientHandle;
         PNP_BRIDGE_IOT_TYPE clientType;
@@ -120,13 +121,13 @@ extern "C"
 
     IOTHUB_CLIENT_RESULT PnpAdapterManager_BuildComponentsInModel(
         PPNP_ADAPTER_MANAGER adapterMgr);
-    
+
     IOTHUB_CLIENT_RESULT PnpAdapterManager_StopComponents(
         PPNP_ADAPTER_MANAGER adapterMgr);
-    
+
     IOTHUB_CLIENT_RESULT PnpAdapterManager_DestroyComponents(
         PPNP_ADAPTER_MANAGER adapterMgr);
-    
+
     void PnpAdapterManager_ReleaseComponentsInModel(
         PPNP_ADAPTER_MANAGER adapterMgr);
 
@@ -155,15 +156,23 @@ extern "C"
         size_t* responseSize,
         void* userContextCallback);
 
-    // PnpAdapterManager_RoutePropertyCallback is the callback function that the PnP helper layer routes per property update.
-    static void PnpAdapterManager_RoutePropertyCallback(
+    // PnpAdapterManager_RoutePropertyCompleteCallback is the callback function that the PnP helper layer routes per property update for DEVICE_TWIN_UPDATE_COMPLETE.
+    static bool PnpAdapterManager_RoutePropertyCompleteCallback(
+        const unsigned char *payload,
+        size_t size,
+        void *userContextCallback);
+
+    // PnpAdapterManager_RoutePropertyPatchCallback is the callback function that the PnP helper layer routes per property update for DEVICE_TWIN_UPDATE_PARTIAL.
+    static void PnpAdapterManager_RoutePropertyPatchCallback(
         const char* componentName,
         const char* propertyName,
         JSON_Value* propertyValue,
         int version,
         void* userContextCallback);
 
-    static void PnpAdapterManager_ResumePnpBridgeAdapterAndComponentCreation(
+    #define PnpAdapterManager_RoutePropertyCallback PnpAdapterManager_RoutePropertyPatchCallback
+
+static void PnpAdapterManager_ResumePnpBridgeAdapterAndComponentCreation(
         JSON_Value* pnpBridgeConfig);
     
     void PnpAdapterManager_SendPnpBridgeStateTelemetry(

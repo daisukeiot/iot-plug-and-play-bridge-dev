@@ -30,11 +30,18 @@ void* PnpComponentHandleGetContext(PNPBRIDGE_COMPONENT_HANDLE ComponentHandle)
     return (void*)componentContextTag->context;
 }
 
-void PnpComponentHandleSetPropertyUpdateCallback (PNPBRIDGE_COMPONENT_HANDLE ComponentHandle,
-    PNPBRIDGE_COMPONENT_PROPERTY_CALLBACK PropertyUpdateCallback)
+void PnpComponentHandleSetPropertyCompleteCallback (PNPBRIDGE_COMPONENT_HANDLE ComponentHandle,
+    PNPBRIDGE_COMPONENT_PROPERTY_COMPLETE_CALLBACK PropertyCompleteCallback)
 {
     PPNPADAPTER_COMPONENT_TAG componentContextTag = (PPNPADAPTER_COMPONENT_TAG)ComponentHandle;
-    componentContextTag->processPropertyUpdate = PropertyUpdateCallback;
+    componentContextTag->processPropertyComplete = PropertyCompleteCallback;
+}
+
+void PnpComponentHandleSetPropertyPatchCallback (PNPBRIDGE_COMPONENT_HANDLE ComponentHandle,
+    PNPBRIDGE_COMPONENT_PROPERTY_PATCH_CALLBACK PropertyPatchCallback)
+{
+    PPNPADAPTER_COMPONENT_TAG componentContextTag = (PPNPADAPTER_COMPONENT_TAG)ComponentHandle;
+    componentContextTag->processPropertyPatch = PropertyPatchCallback;
 }
 
 void PnpComponentHandleSetCommandCallback (PNPBRIDGE_COMPONENT_HANDLE ComponentHandle,
