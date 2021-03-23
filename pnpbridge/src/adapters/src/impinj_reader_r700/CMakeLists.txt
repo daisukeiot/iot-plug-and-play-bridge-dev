@@ -14,16 +14,22 @@ compileAsC99()
 
 set(pnpbridge_adapters_c_files
     ./impinj_reader_r700.c
+    ./restapi.c
     ./utils.c
-#    ./curl_wrapper/curl_wrapper.c
-#    ./helpers/string_manipulation.c
+    ./pnp_property.c
+    ./pnp_command.c
+    ./pnp_telemetry.c
+    ./curl_wrapper/curl_wrapper.c
 )
 
 set(pnpbridge_adapters_h_files
     ./impinj_reader_r700.h
+    ./restapi.h
     ./utils.h
-#    ./curl_wrapper/curl_wrapper.h
-#    ./helpers/string_manipulation.h
+    ./pnp_property.h
+    ./pnp_command.h
+    ./pnp_telemetry.h
+    ./curl_wrapper/curl_wrapper.h
 )
 
 add_definitions("-D_UNICODE") 
