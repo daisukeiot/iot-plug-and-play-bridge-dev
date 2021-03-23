@@ -17,7 +17,7 @@ if(NOT ${build_impinj})
     add_subdirectory(mqtt_pnp)
     add_subdirectory(serial_pnp)
 else()
-    add_subdirectory(impinj_reader)
+    add_subdirectory(impinj_reader_r700)
 endif()
 
 IF(WIN32)
